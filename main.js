@@ -1,13 +1,15 @@
+#!/usr/bin/env node
 let take_user_command=process.argv.slice(2);
 let extract_command=take_user_command[0];
 let directory_path_user=take_user_command[1];
 let path=require('path');
 let indent="";
 let fs = require('fs');
-const { dir } = require('console');
 const types={
-    media:['mp4','mp3','mkv'],
-    documents:['docs','text','txt']
+    media:['mp4','mp3'],
+    archives:['zip','7z','rar','tar','gz','iso','ar'],
+    documents:['pdf','docx','doc','xlsx','txt','xls'],
+    app:['exe','dmg','pkg','deb']
 }
 function treeHelper(directory_path_user,indent){
  let isfile=fs.lstatSync(directory_path_user).isFile();
@@ -22,19 +24,14 @@ function treeHelper(directory_path_user,indent){
     let child =path.join(directory_path_user,read_dir[i]);
      treeHelper(child,indent+"\t");
    }
-//    for(let i=0;i<read_dir.length;i++){
-//     let child=path.join(dirName,read_dir[i]);
-//     console.log(child);
-//     directory_path_user=path.join(directory_path_user,read_dir[i]);
-//     treeHelper(child,indent+"\t");
-//    }
-
  }
 }
 function treefn(directory_path_user){
     console.log('tree is implemented');
-    if(directory_path_user==undefined)
-    console.log('Please Enter the current directory path');
+    if(directory_path_user==undefined){
+        treeHelper(process.cwd(),"");
+        return;
+    }
     else{
      if(fs.existsSync(directory_path_user)){
         treeHelper(directory_path_user,indent);
@@ -52,7 +49,15 @@ function sendFiles(current_path_dir,current_file,category,destination_dir){
     let file_name_extract=path.basename(current_file);
     let same_file_name_path=path.join(category_directory_into_new_dir,file_name_extract);
     fs.copyFileSync(current_file,same_file_name_path);
-    fs.unlinkSync(current_file);
+    
+    /*
+    //fs.unlinkSync(current_file);
+     when you try organize command  without specific path then don't try to uncommit fs.unlinkSync(current_file);
+     Might it will destroy your's operating system or corrupt it 
+     because it save all the files in the new folder_organized folder,
+     So, Please 🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏 don't try without a specified path
+      If u try than u are responsible for consequences.
+    */
     console.log(`${current_file} is copied into new sub directory ${category_directory_into_new_dir} of new directory ${destination_dir} `);
 }
 
@@ -88,10 +93,11 @@ function organizerfn(current_path_user,destination_dir){
    }
 }
 function organizefn(directory_path_user){
-    console.log('organize is implemented');
     let new_dest_directory_path
-    if(directory_path_user==undefined)
-    console.log('Please Enter the current directory path');
+    if(directory_path_user==undefined){
+        new_dest_directory_path=process.cwd();
+        return;
+    }
     else{
         new_dest_directory_path=path.join(directory_path_user,"organized_Files");
      if(fs.existsSync(directory_path_user)){
