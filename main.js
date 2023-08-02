@@ -19,7 +19,7 @@ function sendFiles(current_path_dir,current_file,category,destination_dir){
     let file_name_extract=path.basename(current_file);
     let same_file_name_path=path.join(category_directory_into_new_dir,file_name_extract);
     fs.copyFileSync(current_file,same_file_name_path);
-    fs.unlink(current_file);
+    fs.unlinkSync(current_file);
     console.log(`${current_file} is copied into new sub directory ${category_directory_into_new_dir} of new directory ${destination_dir} `);
 }
 
