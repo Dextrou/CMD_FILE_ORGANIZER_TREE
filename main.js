@@ -2,14 +2,47 @@ let take_user_command=process.argv.slice(2);
 let extract_command=take_user_command[0];
 let directory_path_user=take_user_command[1];
 let path=require('path');
+let indent="";
 let fs = require('fs');
 const { dir } = require('console');
 const types={
     media:['mp4','mp3','mkv'],
     documents:['docs','text','txt']
 }
-function treefn(){
+function treeHelper(directory_path_user,indent){
+ let isfile=fs.lstatSync(directory_path_user).isFile();
+ if(isfile){
+    console.log(indent+"├── "+path.basename(directory_path_user));
+ }
+ else{
+    let dirName=path.basename(directory_path_user);
+   console.log(indent+"└── "+dirName);
+   let read_dir=fs.readdirSync(directory_path_user);
+   for(let i=0;i<read_dir.length;i++){
+    let child =path.join(directory_path_user,read_dir[i]);
+     treeHelper(child,indent+"\t");
+   }
+//    for(let i=0;i<read_dir.length;i++){
+//     let child=path.join(dirName,read_dir[i]);
+//     console.log(child);
+//     directory_path_user=path.join(directory_path_user,read_dir[i]);
+//     treeHelper(child,indent+"\t");
+//    }
+
+ }
+}
+function treefn(directory_path_user){
     console.log('tree is implemented');
+    if(directory_path_user==undefined)
+    console.log('Please Enter the current directory path');
+    else{
+     if(fs.existsSync(directory_path_user)){
+        treeHelper(directory_path_user,indent);
+     }
+     else{
+        console.log('Kindly enter the correct path');
+     }
+    }
 }
 
 function sendFiles(current_path_dir,current_file,category,destination_dir){
@@ -84,7 +117,7 @@ function helpfn(){
 console.log(take_user_command)
 switch(extract_command){
     case '-t':
-        treefn();
+        treefn(directory_path_user);
         break;
         case '-o':
             organizefn(directory_path_user);
